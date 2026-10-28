@@ -41,11 +41,20 @@ Stranice bez kategorije: O nama (vodstvo s fotografijama, podaci o Savezu), Kont
 ## Slike
 Slike se skidaju sa starog servera u `lovacki/images/` (K2 galerije su u `images/{ID članka}/`). Ako stignu i `media/k2/items/src` (glavne slike K2) i `media/k2/attachments` (privitci), staviti ih u `lovacki/media/k2/…`. Zatim pokrenuti `php _alat/uvoz.php` i `php _alat/korisnik.php savez`. Popis onoga što nedostaje je u `_alat/uvoz.log`.
 
-## Poslužitelj
-- baza **lovacki_new** (MySQL): `inc/db-config.php.posluzitelj` → na serveru `inc/db-config.php`; uvesti `_alat/lovacki-baza.sql` (iz `izvoz-mysql.php`)
-- `.htaccess`: DCV blok ostaje; PHP-FPM pool provjeriti (`proxy:fcgi://localhost:8074` je s HNS-a)
-- `data/` i `uploads/` moraju biti zapisivi za PHP
-- stara Joomla: backup cijelog `public_html` + baze prije zamjene; provjeriti backdoore
+## Poslužitelj i deploy
+
+**Prvi put** (cPanel račun na vps.on-click.hr, baza **lovacki_new**):
+1. backup stare stranice: cijeli `public_html` i stara baza (Joomla); provjeriti backdoore
+2. `git clone https://github.com/slykan/lovacki.git ~/lovacki`
+3. isprazniti `public_html` (ostaviti `.well-known`, `cgi-bin`, DCV datoteke)
+4. `inc/db-config.php.posluzitelj` → `~/public_html/inc/db-config.php`, `inc/mail-config.php` → `~/public_html/inc/mail-config.php` (scp; nisu u gitu)
+5. lokalno `bash _alat/paket.sh` → `_paket/lovacki-podaci.tgz` (uploads, images, baza); scp u `~/`
+6. `bash ~/lovacki/deploy.sh --paket ~/lovacki-podaci.tgz`, zatim obrisati paket
+7. `.htaccess`: provjeriti PHP-FPM pool/port za račun (u repou je `proxy:fcgi://localhost:8074` s HNS-a)
+8. provjera: `/`, `/novosti`, članica, `/index.php/component/k2/item/551` → 301, `/admin/`, `/inc/db-config.php` → 403, kontakt obrazac
+9. Search Console: poslati `sitemap.xml`
+
+**Dalje:** `bash ~/lovacki/deploy.sh` — git pull + rsync `web/` → `public_html`. Ne dira `uploads/`, `images/`, `data/`, `inc/db-config.php`, `inc/mail-config.php` ni DCV datoteke. **Živa baza je izvor istine** (klijent uređuje u adminu): `--paket` s bazom ponovno pokretati samo prije objave, kasnije bi prepisao klijentove izmjene.
 
 ## Mail
 - šalje `web@lovacki-savez-osijek.hr` preko `vps.on-click.hr:465`, prima `lovacki.savez.obz@gmail.com` (adresa sa stare stranice), Reply-To je pošiljatelj
