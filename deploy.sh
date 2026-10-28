@@ -5,7 +5,7 @@
 #                                               — prvi put: + uploads/, images/ i baza iz paketa (_alat/paket.sh)
 #
 # Ne dira: uploads/ i images/ (slike), data/, inc/db-config.php i inc/mail-config.php (tajne),
-# .well-known/ i DCV datoteke. Baza (MySQL lovacki_new) se uvozi SAMO s --paket i prepisuje sav sadržaj.
+# .well-known/, DCV datoteke i old/ (stara Joomla). Baza (MySQL lovacki_new) se uvozi SAMO s --paket i prepisuje sav sadržaj.
 set -euo pipefail
 
 REPO="$HOME/lovacki"
