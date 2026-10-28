@@ -49,10 +49,10 @@ Slike se skidaju sa starog servera u `lovacki/images/` (K2 galerije su u `images
 
 ## Mail
 - šalje `web@lovacki-savez-osijek.hr` preko `vps.on-click.hr:465`, prima `lovacki.savez.obz@gmail.com` (adresa sa stare stranice), Reply-To je pošiljatelj
-- 2026-10-28: prijava (235) i primatelj (250) provjereni, bez slanja stvarne poruke
+- 2026-10-28: prijava (235) provjerena i poslana jedna testna poruka („Test: kontakt obrazac nove web stranice”)
 
 ## Otvoreno
-- [ ] stvarni test slanja obrasca (ide klijentu)
+- [ ] potvrditi da je testna poruka stigla (i nije u spamu)
 - [ ] slike: najnovije galerije (10xx) i glavne slike K2, privitci `media/k2/attachments` (31 dokument)
 - [ ] dokumenti su iz 2006.–2009. (Zakon o lovstvu NN 140/05 — danas vrijedi NN 99/18 i izmjene): pitati klijenta za aktualne
 - [ ] brojke na naslovnici (109 članica, 2.812 lovaca, 274.554 ha) su sa stare stranice — provjeriti
