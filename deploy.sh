@@ -24,6 +24,7 @@ rsync -a --delete \
   --exclude 'inc/mail-config.php' \
   --exclude '.well-known/' \
   --exclude 'cgi-bin/' \
+  --exclude 'old/' \
   --exclude 'error_log' \
   --exclude '*.txt' \
   --exclude '*.cpaneldcv' \
