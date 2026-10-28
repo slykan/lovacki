@@ -52,6 +52,16 @@ require __DIR__ . '/_vrh.php';
       <b>Divljač</b><span>Krupna i sitna divljač</span>
     </a>
   </div>
+  <div class="wrap">
+    <div class="steta">
+      <span class="ik" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg></span>
+      <div>
+        <b>Šteta od divljači?</b>
+        <p>Štetu od divljači prijavite online putem portala DEKRA – Hrvatski lovački savez.</p>
+      </div>
+      <a class="btn btn-glavni" href="<?= e($O['steta']) ?>" target="_blank" rel="noopener">Prijavi štetu <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
 </section>
 
 <?php if ($glavna): ?>

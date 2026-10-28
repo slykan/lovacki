@@ -29,6 +29,7 @@
     <div>
       <h2>Poveznice</h2>
       <ul>
+        <li><a href="<?= e($O['steta']) ?>" target="_blank" rel="noopener">Prijava štete od divljači ↗</a></li>
         <li><a href="<?= e($O['hls']) ?>" target="_blank" rel="noopener">Hrvatski lovački savez ↗</a></li>
         <li><a href="<?= e($O['facebook']) ?>" target="_blank" rel="noopener">Facebook ↗</a></li>
         <li><a href="/politika-privatnosti">Politika privatnosti</a></li>

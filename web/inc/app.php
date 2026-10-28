@@ -32,6 +32,7 @@ $GLOBALS['ORG'] = array(
     'osnovan' => '1995-01-21',
     'facebook'=> 'https://www.facebook.com/lovackisavezosijek/',
     'hls'     => 'https://www.hls.com.hr/',
+    'steta'   => 'https://dekra-hls-portal.powerappsportals.com/hr-HR/Customer-Notice/', // prijava štete od divljači
     'geo'     => array(45.563461, 18.669041),
 );
 
