@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /posalji.php
+Disallow: /pretraga
+
+Sitemap: https://www.lovacki-savez-osijek.hr/sitemap.xml

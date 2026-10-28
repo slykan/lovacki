@@ -1,0 +1,15 @@
+# Lovački savez OBŽ — u git ide samo kod
+upute.txt
+lovacki_cms.sql
+izvor/
+images/
+media/
+_alat/admin-pristup.txt
+_alat/*.log
+_alat/*.sql
+web/data/
+web/uploads/
+web/images/
+web/inc/mail-config.php
+web/inc/db-config.php
+web/inc/db-config.php.posluzitelj

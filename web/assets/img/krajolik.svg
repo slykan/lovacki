@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 240" preserveAspectRatio="xMidYMax slice">
+  <!-- daleka brda -->
+  <path fill="#9a5f22" opacity=".55" d="M0 150 C 180 110 320 120 470 135 S 760 95 930 118 S 1230 92 1400 120 S 1560 130 1600 126 V240 H0Z"/>
+  <!-- hrastovi na srednjem brdu -->
+  <g fill="#4a2e15">
+    <rect x="286" y="118" width="9" height="40" rx="2"/>
+    <circle cx="275" cy="112" r="20"/><circle cx="300" cy="104" r="23"/><circle cx="318" cy="117" r="17"/><circle cx="262" cy="124" r="14"/><circle cx="292" cy="124" r="16"/>
+    <rect x="1236" y="104" width="10" height="46" rx="2"/>
+    <circle cx="1224" cy="98" r="22"/><circle cx="1250" cy="88" r="26"/><circle cx="1272" cy="102" r="19"/><circle cx="1208" cy="110" r="15"/><circle cx="1244" cy="110" r="18"/>
+    <rect x="1323" y="128" width="6" height="24" rx="2"/>
+    <circle cx="1318" cy="124" r="12"/><circle cx="1332" cy="118" r="13"/><circle cx="1340" cy="128" r="9"/>
+  </g>
+  <!-- srednje brdo (polja) -->
+  <path fill="#c4842c" d="M0 172 C 220 140 420 150 620 160 S 980 132 1180 146 S 1480 150 1600 140 V240 H0Z"/>
+  <path fill="none" stroke="#d9a043" stroke-width="2" opacity=".6" d="M0 190 C 240 165 460 172 660 180 S 1020 160 1220 170 S 1500 174 1600 166"/>
+  <!-- jelen u daljini -->
+  <g fill="#3a2410" transform="translate(905 128) scale(.55)">
+    <path d="M10 40 C 12 30 30 26 46 27 L 58 18 L 62 6 L 66 18 L 64 28 C 68 34 68 40 66 46 L 62 62 L 58 62 L 58 48 L 30 48 L 26 62 L 22 62 L 22 48 C 14 48 10 46 10 40Z"/>
+    <path d="M60 8 L 52 -6 M 56 2 L 46 -2 M 64 8 L 70 -8 M 67 2 L 78 -2" stroke="#3a2410" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- bliže brdo prelazi u krem pozadinu sljedeće sekcije -->
+  <path fill="#e9c98a" d="M0 206 C 260 180 520 190 760 198 S 1180 180 1400 190 S 1560 196 1600 192 V240 H0Z"/>
+  <path fill="#fbf4e2" d="M0 224 C 300 210 600 214 860 220 S 1340 210 1600 214 V240 H0Z"/>
+</svg>

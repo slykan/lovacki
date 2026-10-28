@@ -1,0 +1,64 @@
+# ONCLICK-DCV START (AutoSSL / DCV - ne brisati)
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^\.well-known/(acme-challenge|pki-validation)/ - [L]
+RewriteRule ^[0-9A-Fa-f]{32}\.txt$ - [L]
+RewriteRule ^[0-9]+\..+\.cpaneldcv$ - [L]
+</IfModule>
+# ONCLICK-DCV END
+
+# PHP na poslužitelju (vps.on-click.hr) ide kroz FPM — provjeriti pool/port za ovaj račun prije uploada
+<FilesMatch \.php$>
+    SetHandler "proxy:fcgi://localhost:8074"
+</FilesMatch>
+
+# Lovački savez OBŽ — PHP + MySQL na poslužitelju / SQLite lokalno (admin u /admin)
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# jedna adresa: https://www.lovacki-savez-osijek.hr (s www, kao stara stranica); X-Forwarded-Proto zbog Cloudflarea
+RewriteCond %{HTTP_HOST} ^lovacki-savez-osijek\.hr$ [NC]
+RewriteRule ^ https://www.lovacki-savez-osijek.hr%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} ^www\.lovacki-savez-osijek\.hr$ [NC]
+RewriteRule ^ https://www.lovacki-savez-osijek.hr%{REQUEST_URI} [L,R=301]
+
+# kod, baza i alati nisu dostupni preko weba
+RewriteRule ^(inc|data)(/|$) - [F,L]
+
+# stare Joomla mape → naslovna (images/ ostaje: u njoj su slike i PDF-ovi iz starih tekstova)
+RewriteRule ^(components|modules|templates|plugins|media|administrator|cache|libraries|cli|tmp|logs)(/.*)?$ / [L,R=301,NC]
+
+# sve ostalo što nije datoteka ide kroz index.php (uključujući stare /index.php/... adrese)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+RewriteRule ^index\.php/ index.php [L]
+</IfModule>
+
+<FilesMatch "^(mail-config.*|db-config.*|.*\.sqlite.*|.*\.sql|README\.md|\.git.*|deploy\.sh|\.user\.ini)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json application/xml application/rss+xml image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 6 months"
+  ExpiresByType image/png "access plus 6 months"
+  ExpiresByType image/x-icon "access plus 6 months"
+</IfModule>
