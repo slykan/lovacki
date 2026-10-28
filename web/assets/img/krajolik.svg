@@ -14,7 +14,7 @@
   <path fill="#c4842c" d="M0 172 C 220 140 420 150 620 160 S 980 132 1180 146 S 1480 150 1600 140 V240 H0Z"/>
   <path fill="none" stroke="#d9a043" stroke-width="2" opacity=".6" d="M0 190 C 240 165 460 172 660 180 S 1020 160 1220 170 S 1500 174 1600 166"/>
   <!-- divlja svinja viri iz grma -->
-  <g transform="translate(345 104) scale(1)">
+  <g transform="translate(356.5 118.6) scale(.72)">
     <!-- divlja svinja (gleda udesno); stražnji dio skriva grm -->
     <g fill="#2e1c0c">
       <path d="M8 22 C 12 14 24 10 36 9 C 44 8.5 52 10 57 14 C 62 17 67 21 71 24 L 75.2 25.6 L 75.6 30.2 L 70.6 30.6
@@ -36,7 +36,7 @@
     </g>
   </g>
   <!-- jelen u daljini -->
-  <g transform="translate(886 112) scale(.6)">
+  <g transform="translate(866.8 77.6) scale(1)">
 <g fill="#3a2410">
     
     <path d="M27 21 C 24 21 20 24 17 27.5 C 16 28.8 16.6 30 18 30.2 L 23 30.6 C 25 31 27 32.5 28.5 35

@@ -25,6 +25,7 @@ $rmdir = function ($d) use (&$rmdir) {
 foreach (glob($WEB . '/uploads/*', GLOB_ONLYDIR) ?: array() as $d) $rmdir($d); // sve mape (GGGG/, galerija/, privitci/); .htaccess ostaje
 
 require $WEB . '/inc/app.php';
+require __DIR__ . '/clanica.php';
 $db = db();
 // izvor: lokalno baza lovacki_izvor (root bez lozinke); na poslužitelju LSO_JOOMLA=~/old (stara Joomla:
 // baza iz configuration.php, slike iz images/ i media/ te mape)
@@ -113,59 +114,6 @@ function ocisti($html)
     return sanitiziraj_html($html);
 }
 
-/** Članica (LD): tablice „oznaka: vrijednost” → kartice polja. */
-function clanica($html)
-{
-    $doc = new DOMDocument();
-    libxml_use_internal_errors(true);
-    $doc->loadHTML('<?xml encoding="utf-8"?><div>' . $html . '</div>');
-    libxml_clear_errors();
-    $polja = array();
-    $txt = function ($n) { return trim(preg_replace('/\s+/u', ' ', str_replace("\xC2\xA0", ' ', $n->textContent))); };
-    // zajedničko lovište iz zaglavlja
-    foreach ($doc->getElementsByTagName('p') as $p) {
-        if (preg_match('/lovište broj:\s*(.+)$/iu', $txt($p), $m)) { $polja[] = array('Zajedničko lovište', trim($m[1])); break; }
-    }
-    $zadnja = null;
-    foreach ($doc->getElementsByTagName('tr') as $tr) {
-        $td = array();
-        foreach ($tr->childNodes as $c) if ($c instanceof DOMElement && in_array($c->nodeName, array('td', 'th'))) $td[] = $c;
-        if (count($td) < 2) continue;
-        $oznaka = rtrim($txt($td[0]), ': ');
-        $vrijednost = trim($txt($td[1]), " .\t");
-        if (in_array($vrijednost, array('', '-', '–'), true)) { if ($oznaka !== '') $zadnja = null; continue; }
-        if ($oznaka === '') {
-            if ($zadnja !== null) $polja[$zadnja][1] .= ', ' . $vrijednost;
-            continue;
-        }
-        $oznaka = mb_strtoupper(mb_substr($oznaka, 0, 1)) . mb_substr($oznaka, 1);
-        $polja[] = array($oznaka, $vrijednost);
-        $zadnja = count($polja) - 1;
-    }
-    if (!$polja) return null;
-    // sažetak za popis: kontakt osoba · telefon · lovište
-    $po = array();
-    foreach ($polja as $p) $po[mb_strtolower($p[0])] = $p[1];
-    $GLOBALS['clanica_sazetak'] = implode(' · ', array_filter(array(
-        isset($po['kontakt osoba']) ? 'Kontakt: ' . $po['kontakt osoba'] : null,
-        $po['broj mobitela'] ?? ($po['broj telefona'] ?? null),
-        isset($po['zajedničko lovište']) ? 'lovište ' . $po['zajedničko lovište'] : null,
-    )));
-    $out = '<div class="polja">';
-    $povijest = '';
-    foreach ($polja as $p) {
-        list($o, $v) = $p;
-        if (preg_match('/povijest/i', $o)) { $povijest = $v; continue; }
-        $v = e($v);
-        if (preg_match('/e-?mail/i', $o)) $v = preg_replace('/([\w.+-]+@[\w-]+\.[\w.]+)/', '<a href="mailto:$1">$1</a>', $v);
-        if (preg_match('/^www/i', $o) && preg_match('#^(https?://)?([\w-]+\.)+\w+#', html_entity_decode($v))) $v = '<a href="' . (preg_match('#^https?://#', $v) ? '' : 'http://') . $v . '" target="_blank" rel="noopener">' . $v . '</a>';
-        if (preg_match('/mobitel|telefon|tel\b/i', $o)) $v = preg_replace_callback('#[+\d][\d /-]{6,}\d#', function ($m) { return '<a href="tel:' . preg_replace('/[^\d+]/', '', $m[0]) . '">' . $m[0] . '</a>'; }, $v);
-        $out .= '<p class="polje"><span class="titula">' . e($o) . '</span> <strong>' . $v . '</strong></p>';
-    }
-    $out .= '</div>';
-    if ($povijest !== '') $out .= '<h2>Kratka povijest</h2><p>' . e($povijest) . '</p>';
-    return $out;
-}
 
 /** Datoteke slika u mapi galerije, prirodnim redom. */
 function slike_mape($dir)
@@ -199,13 +147,9 @@ foreach ($grupe as $g) {
     if ($k2kat[$r['catid']] === 'lovni-uredi') {
         foreach ($lu as $ime => $slug) {
             if (preg_match('/' . preg_quote($ime, '/') . '$/u', trim($r['title']))) {
-                // prvi odlomak (voditelj ureda) ostaje, redovi „001 "Srndać" Beli Manastir - Kontakt osoba: …” → popis
+                // ostaje samo odlomak s voditeljem ureda; popis društava (klijent ga ne želi, društva su kartice ispod) se briše
                 $opis = ocisti($tekst);
-                if (preg_match_all('#<p>(.*?)</p>#s', $opis, $pp) && count($pp[1]) > 3) {
-                    $prvi = array_shift($pp[1]);
-                    $opis = '<p>' . $prvi . '</p><h2>Lovačka društva i kontakt osobe</h2><ul class="popis-ureda">'
-                        . implode('', array_map(function ($x) { return '<li>' . trim(preg_replace('/^[-–]\s*/u', '', $x)) . '</li>'; }, $pp[1])) . '</ul>';
-                }
+                if (preg_match('#<p>(?:(?!</p>).)*Voditelj(?:(?!</p>).)*</p>#su', $opis, $vod)) $opis = $vod[0];
                 $db->prepare('UPDATE kategorije SET opis = ? WHERE id = ?')->execute(array(sanitiziraj_html($opis), $kat[$slug]));
                 foreach ($ids as $i) $preusm['item/' . $i] = '/clanice-saveza/' . $slug;
             }
@@ -237,7 +181,7 @@ foreach ($grupe as $g) {
     if ($r['catid'] == 9) $redoslijed = mb_stripos($naslov, 'način') !== false ? 10 : 20;
 
     $html = null; $GLOBALS['clanica_sazetak'] = '';
-    if ($r['catid'] >= 15 && $r['catid'] <= 20) $html = clanica($tekst);
+    if ($r['catid'] == 8 || ($r['catid'] >= 15 && $r['catid'] <= 20)) $html = clanica($tekst); // 8 = stara nadkategorija „Članice”
     if ($html === null) $html = ocisti($tekst);
     // video iz K2 polja
     if (preg_match('#\{YouTube\}([\w-]{6,})\{/YouTube\}#i', (string) $r['video'], $v)) {
