@@ -32,10 +32,12 @@ rsync -a --delete \
 cp "$REPO/web/robots.txt" "$WEB/robots.txt"
 
 # mape koje PHP mora moći pisati + zaštite (u uploads/ i images/ se PHP ne izvršava, data/ i inc/ nisu dostupni)
+# (uploads/ i data/ nisu u gitu, pa se .htaccess piše ovdje)
 mkdir -p "$WEB/uploads" "$WEB/images" "$WEB/data"
-cp "$REPO/web/uploads/.htaccess" "$WEB/uploads/.htaccess"
-cp "$REPO/web/uploads/.htaccess" "$WEB/images/.htaccess"
-cp "$REPO/web/data/.htaccess" "$WEB/data/.htaccess"
+for d in uploads images; do
+  printf '# u %s/ se ne izvršava kod\n<FilesMatch "\\.(php|phtml|phar|pl|py|cgi|sh)$">\n  Require all denied\n</FilesMatch>\n' "$d" > "$WEB/$d/.htaccess"
+done
+echo 'Require all denied' > "$WEB/data/.htaccess"
 chmod 775 "$WEB/uploads" "$WEB/data"
 
 if [ -n "$PAKET" ]; then
