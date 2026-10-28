@@ -19,7 +19,7 @@ mb_internal_encoding('UTF-8');
 $GLOBALS['ORG'] = array(
     'naziv'   => 'Lovački savez Osječko-baranjske županije',
     'kratko'  => 'Lovački savez OBŽ',
-    'adresa'  => 'J. J. Strossmayera 65a',
+    'adresa'  => 'Šandora Petofia 204/a',   // streljana Pampas
     'mjesto'  => '31000 Osijek',
     'tel'     => '+385 31 369 592',
     'tel_link'=> '+38531369592',
@@ -33,7 +33,7 @@ $GLOBALS['ORG'] = array(
     'facebook'=> 'https://www.facebook.com/lovackisavezosijek/',
     'hls'     => 'https://www.hls.com.hr/',
     'steta'   => 'https://dekra-hls-portal.powerappsportals.com/hr-HR/Customer-Notice/', // prijava štete od divljači
-    'geo'     => array(45.563461, 18.669041),
+    'geo'     => array(45.5711647, 18.6408947), // streljana Pampas (OpenStreetMap)
 );
 
 /**
