@@ -22,18 +22,28 @@ $rmdir = function ($d) use (&$rmdir) {
     foreach (glob($d . '/{,.}[!.]*', GLOB_BRACE) ?: array() as $f) is_dir($f) ? $rmdir($f) : unlink($f);
     if (basename($d) !== 'uploads') rmdir($d);
 };
-foreach (array('galerija', 'privitci', 'uvoz') as $d) if (is_dir($WEB . '/uploads/' . $d)) $rmdir($WEB . '/uploads/' . $d);
+foreach (glob($WEB . '/uploads/*', GLOB_ONLYDIR) ?: array() as $d) $rmdir($d); // sve mape (GGGG/, galerija/, privitci/); .htaccess ostaje
 
 require $WEB . '/inc/app.php';
 $db = db();
-$izv = new PDO('mysql:host=127.0.0.1;dbname=lovacki_izvor;charset=utf8mb4', 'root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC));
+// izvor: lokalno baza lovacki_izvor (root bez lozinke); na poslužitelju LSO_JOOMLA=~/old (stara Joomla:
+// baza iz configuration.php, slike iz images/ i media/ te mape)
+$JOOMLA = getenv('LSO_JOOMLA') ?: null;
+if ($JOOMLA) {
+    $jc = file_get_contents($JOOMLA . '/configuration.php');
+    $j = function ($k) use ($jc) { return preg_match('/public \$' . $k . '\s*=\s*\'((?:[^\'\\\\]|\\\\.)*)\'/', $jc, $m) ? stripslashes($m[1]) : ''; };
+    if ($j('dbprefix') !== 'a8ubr_') exit('Neočekivani prefiks tablica: ' . $j('dbprefix') . PHP_EOL);
+    $izv = new PDO('mysql:host=' . ($j('host') === 'localhost' ? '127.0.0.1' : $j('host')) . ';dbname=' . $j('db') . ';charset=utf8mb4', $j('user'), $j('password'), array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC));
+} else {
+    $izv = new PDO('mysql:host=127.0.0.1;dbname=lovacki_izvor;charset=utf8mb4', 'root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC));
+}
 $log = array('nema_glavne' => 0, 'galerije' => 0, 'slike_gal' => 0, 'nedostaje' => array());
 
 function nadji($rel)
 {
-    global $KORIJEN;
+    global $KORIJEN, $JOOMLA;
     $rel = ltrim(rawurldecode($rel), '/');
-    foreach (array($KORIJEN . '/', $KORIJEN . '/izvor/') as $r) {
+    foreach (array_filter(array($JOOMLA ? rtrim($JOOMLA, '/') . '/' : null, $KORIJEN . '/', $KORIJEN . '/izvor/')) as $r) {
         if (is_file($r . $rel) || is_dir($r . $rel)) return $r . $rel;
     }
     return null;
